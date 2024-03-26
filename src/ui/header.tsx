@@ -3,6 +3,7 @@ import { MantineLogo } from "@mantinex/mantine-logo";
 import classes from "@/styles/header.module.css";
 import { IconArrowRight, IconFiles } from "@tabler/icons-react";
 import Link from "next/link";
+import UserButton from "./UserButton";
 
 export default function Header() {
   return (
@@ -17,13 +18,16 @@ export default function Header() {
             variant="light"
             leftSection={<IconFiles size={14} />}
             rightSection={<IconArrowRight size={14} />}
+            component={Link}
+            href={"/dashboard/files"}
           >
             Your files
           </Button>
 
           <Group>
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
+            {/* <Button variant="default" component={Link} href={"/login"}>Log in</Button>
+            <Button component={Link} href={"/signup"}>Sign up</Button> */}
+            <UserButton />
           </Group>
 
         </Group>

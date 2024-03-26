@@ -1,12 +1,16 @@
-import { Avatar, Grid, ActionIcon, Alert, AppShell, Burger, Button, Center, FileInput, Group, Modal, NavLink, SegmentedControl, Select, TextInput, TextInputProps, rem, useMantineTheme } from "@mantine/core";
+import { AppShell, Burger, Button, Group, NavLink, Select } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
-import { IconFiles, IconArrowRight, IconStar, IconTrash, IconSearch, IconLayoutGrid, IconLayoutRows, IconUpload, IconInfoCircle, IconPhoto, IconDotsVertical } from "@tabler/icons-react";
-import { DataTable } from "mantine-datatable";
-import Image from "next/image";
+import { IconFiles, IconArrowRight, IconStar, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
+import SearchFilesInput from "./searchFilesInput";
+import CustomSegmentedControl from "./customSegmentedControl";
+import FilesGridView from "./filesGridView";
+import FilesTableView from "./filesTableView";
+import UploadFileModal from "./uploadFileModal";
+import NoFilesUploaded from "./noFilesUploaded";
 
 type Props = {
   title: string
@@ -30,210 +34,6 @@ const linkItems = [
   },
 ]
 
-function InputWithButton(props: TextInputProps) {
-  const theme = useMantineTheme();
-
-  return (
-    <TextInput
-      radius="xl"
-      size="md"
-      placeholder="Search files"
-      rightSectionWidth={42}
-      leftSection={<IconSearch style={{ width: rem(18), height: rem(18) }} stroke={1.5} />}
-      rightSection={
-        <ActionIcon size={32} radius="xl" color={theme.primaryColor} variant="filled">
-          <IconArrowRight style={{ width: rem(18), height: rem(18) }} stroke={1.5} />
-        </ActionIcon>
-      }
-      {...props}
-    />
-  );
-}
-
-type CustomSegmentedControlProps = {
-  value: string,
-  setValue: (value: SetStateAction<string>) => void
-}
-
-function CustomSegmentedControl({ value, setValue }: CustomSegmentedControlProps) {
-  return (
-    <SegmentedControl
-      value={value}
-      onChange={(val: string) => setValue(val)}
-      data={[
-        {
-          value: "grid",
-          label: (
-            <Center style={{ gap: 10 }}>
-              <IconLayoutGrid style={{ width: rem(16), height: rem(16) }} />
-              <span>Grid</span>
-            </Center>
-          ),
-        },
-        {
-          value: "table",
-          label: (
-            <Center style={{ gap: 10 }}>
-              <IconLayoutRows style={{ width: rem(16), height: rem(16) }} />
-              <span>Table</span>
-            </Center>
-          ),
-        }
-      ]}
-    />
-  )
-}
-
-function CustomAlert({ text }: { text: string }) {
-  const icon = <IconInfoCircle />;
-  return (
-    <Alert variant="light" color="blue" icon={icon}>
-      {text}
-    </Alert>
-  );
-}
-
-function UploadFileModal() {
-  const [opened, { open, close }] = useDisclosure(false);
-  return (
-    <>
-      <Modal size="md" centered opened={opened} onClose={close} title={<h4>Upload Your File Here</h4>}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 20,
-          }}
-        >
-          <CustomAlert text="This file will be accessible by anyone in your organization" />
-          <TextInput
-            label="Title"
-            placeholder="Title"
-          />
-
-          <FileInput
-            label="File"
-            placeholder="No file selected"
-            leftSection={<IconUpload />}
-          />
-
-          <Button>Submit</Button>
-        </div>
-      </Modal>
-
-      <Button onClick={open}>Upload File</Button>
-    </>
-  )
-}
-
-function FilesTable() {
-  return (
-    <DataTable
-      withTableBorder
-      borderRadius="md"
-      highlightOnHover
-      minHeight={150}
-      columns={[
-        { accessor: "name" },
-        { accessor: "type" },
-        { accessor: "user" },
-        { accessor: "uploaded on" },
-        { accessor: "actions" }
-      ]}
-      records={[]}
-    />
-  )
-}
-
-function SingleFile() {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 10,
-        border: "1px solid #e1e1e1",
-        borderRadius: 10,
-        padding: 20,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 2
-          }}
-        >
-          <IconPhoto />
-          another screenshot
-        </span>
-        <ActionIcon variant="transparent" aria-label="Actions">
-          <IconDotsVertical style={{ width: "70%", height: "70%" }} stroke={1.5} />
-        </ActionIcon>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-        }}>
-        <Image style={{
-          objectFit: "contain",
-        }} src={"/imed-02.jpg"} width={100} height={200} alt="file" />
-      </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 2
-          }}
-        >
-          <Avatar src={"/imed-02.jpg"} size="sm" alt="it's me" />
-          <span
-            style={{
-              fontSize: 15,
-            }}
-          >
-            slimani
-          </span>
-        </span>
-        <span
-          style={{
-            fontSize: 15,
-          }}
-        >
-          Uploaded on today at 5:40 PM
-        </span>
-      </div>
-    </div>
-  )
-}
-
-function FilesGrid() {
-  return (
-    <Grid>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
-    </Grid>
-  )
-}
 
 export function SideNavLayout({ title }: Props) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
@@ -266,14 +66,14 @@ export function SideNavLayout({ title }: Props) {
             leftSection={<IconFiles size={14} />}
             rightSection={<IconArrowRight size={14} />}
             component={Link}
-            href="/dashboard/files"
+            href={"/dashboard/files"}
           >
             Your files
           </Button>
 
           <Group>
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
+            <Button variant="default" component={Link} href={"/login"}>Log in</Button>
+            <Button component={Link} href={"/signup"}>Sign up</Button>
           </Group>
 
         </Group>
@@ -297,7 +97,7 @@ export function SideNavLayout({ title }: Props) {
           alignItems: "center",
         }}>
           <h1>{title}</h1>
-          <InputWithButton />
+          <SearchFilesInput />
           <UploadFileModal />
         </div>
 
@@ -315,29 +115,9 @@ export function SideNavLayout({ title }: Props) {
             allowDeselect={false}
           />
         </div>
-        {view === "table" && <FilesTable />}
-        {view === "grid" && <FilesGrid />}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          <div
-            style={{
-              marginTop: 100,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 10,
-            }}
-          >
-            <Image src={"/no_data.svg"} width={200} height={200} alt="no data" />
-            <h3>You haven&apos;t uploaded any files yet</h3>
-          </div>
-        </div>
+        {view === "table" && <FilesTableView />}
+        {view === "grid" && <FilesGridView />}
+        <NoFilesUploaded />
       </AppShell.Main>
     </AppShell >
   );

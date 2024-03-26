@@ -11,7 +11,7 @@ export default function RootLayout({ children }: Props) {
       display: "flex",
       minHeight: "100vh",
       flexDirection: "column",
-      justifyContent: "flex-start"
+      justifyContent: "flex-start",
     }}>
       <Header />
       {children}
