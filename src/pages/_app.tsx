@@ -1,22 +1,20 @@
 import "@mantine/core/styles.css";
+import "mantine-datatable/styles.layer.css";
+import "@/styles/layout.css";
 import type { AppProps } from "next/app";
-import { MantineProvider } from "@mantine/core";
+import { MantineProvider, createTheme } from "@mantine/core";
 import { Inter } from "next/font/google";
-import RootLayout from "@/ui/rootLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const theme = createTheme({
+  fontFamily: inter.style.fontFamily
+});
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <MantineProvider>
-      <style jsx global>{`
-        html {
-          font-family: ${inter.style.fontFamily};
-        }
-      `}</style>
-      <RootLayout>
-        <Component {...pageProps} />
-      </RootLayout>
+    <MantineProvider theme={theme}>
+      <Component {...pageProps} />
     </MantineProvider>
   );
 }

@@ -1,7 +1,11 @@
 import Footer from "./footer";
 import Header from "./header";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+type Props = {
+  children: React.ReactNode;
+};
+
+export default function RootLayout({ children }: Props) {
   return (
     <div style={{
       display: "flex",
