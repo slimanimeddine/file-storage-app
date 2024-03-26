@@ -1,7 +1,7 @@
-import { ActionIcon, Alert, AppShell, Burger, Button, Center, FileInput, Group, Modal, NavLink, SegmentedControl, Select, TextInput, TextInputProps, rem, useMantineTheme } from "@mantine/core";
+import { Avatar, Grid, ActionIcon, Alert, AppShell, Burger, Button, Center, FileInput, Group, Modal, NavLink, SegmentedControl, Select, TextInput, TextInputProps, rem, useMantineTheme } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
-import { IconFiles, IconArrowRight, IconStar, IconTrash, IconSearch, IconLayoutGrid, IconLayoutRows, IconUpload, IconInfoCircle } from "@tabler/icons-react";
+import { IconFiles, IconArrowRight, IconStar, IconTrash, IconSearch, IconLayoutGrid, IconLayoutRows, IconUpload, IconInfoCircle, IconPhoto, IconDotsVertical } from "@tabler/icons-react";
 import { DataTable } from "mantine-datatable";
 import Image from "next/image";
 import Link from "next/link";
@@ -52,14 +52,14 @@ function InputWithButton(props: TextInputProps) {
 
 type CustomSegmentedControlProps = {
   value: string,
-  setValue: (value: SetStateAction<"grid" | "table">) => void
+  setValue: (value: SetStateAction<string>) => void
 }
 
 function CustomSegmentedControl({ value, setValue }: CustomSegmentedControlProps) {
   return (
     <SegmentedControl
       value={value}
-      onChange={setValue}
+      onChange={(val: string) => setValue(val)}
       data={[
         {
           value: "grid",
@@ -145,11 +145,101 @@ function FilesTable() {
   )
 }
 
+function SingleFile() {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        border: "1px solid #e1e1e1",
+        borderRadius: 10,
+        padding: 20,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 2
+          }}
+        >
+          <IconPhoto />
+          another screenshot
+        </span>
+        <ActionIcon variant="transparent" aria-label="Actions">
+          <IconDotsVertical style={{ width: "70%", height: "70%" }} stroke={1.5} />
+        </ActionIcon>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}>
+        <Image style={{
+          objectFit: "contain",
+        }} src={"/imed-02.jpg"} width={100} height={200} alt="file" />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 2
+          }}
+        >
+          <Avatar src={"/imed-02.jpg"} size="sm" alt="it's me" />
+          <span
+            style={{
+              fontSize: 15,
+            }}
+          >
+            slimani
+          </span>
+        </span>
+        <span
+          style={{
+            fontSize: 15,
+          }}
+        >
+          Uploaded on today at 5:40 PM
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function FilesGrid() {
+  return (
+    <Grid>
+      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
+      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
+      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
+      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
+      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
+      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
+    </Grid>
+  )
+}
+
 export function SideNavLayout({ title }: Props) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const pathname = usePathname()
-  const [view, setView] = useState<"grid" | "table">("grid");
+  const [view, setView] = useState("grid");
 
   return (
     <AppShell
@@ -166,12 +256,17 @@ export function SideNavLayout({ title }: Props) {
           <Group>
             <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
             <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
-            <MantineLogo size={30} />
+            <Link href={"/"}>
+              <MantineLogo size={30} />
+            </Link>
+
           </Group>
           <Button
             variant="light"
             leftSection={<IconFiles size={14} />}
             rightSection={<IconArrowRight size={14} />}
+            component={Link}
+            href="/dashboard/files"
           >
             Your files
           </Button>
@@ -221,6 +316,7 @@ export function SideNavLayout({ title }: Props) {
           />
         </div>
         {view === "table" && <FilesTable />}
+        {view === "grid" && <FilesGrid />}
         <div
           style={{
             display: "flex",

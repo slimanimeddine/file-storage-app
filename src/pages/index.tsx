@@ -1,11 +1,10 @@
 import { Overlay, Container, Title, Button, Text } from "@mantine/core";
 import classes from "@/styles/home.module.css";
-import { useRouter } from "next/router";
 import RootLayout from "@/ui/rootLayout";
 import Head from "next/head";
+import Link from "next/link";
 
 export default function Page() {
-  const router = useRouter()
 
   return (
     <RootLayout>
@@ -24,7 +23,7 @@ export default function Page() {
             Make an account an start managing your files in less than a minute.
           </Text>
 
-          <Button variant="gradient" size="xl" radius="xl" className={classes.control} onClick={() => router.push("/dashboard")}>
+          <Button variant="gradient" size="xl" radius="xl" className={classes.control} component={Link} href={"/dashboard/files"}>
             Get started
           </Button>
         </Container>
