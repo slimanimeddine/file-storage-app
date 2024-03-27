@@ -1,4 +1,4 @@
-import { AppShell, Burger, Button, Group, NavLink, Select } from "@mantine/core";
+import { AppShell, Burger, Button, Flex, Group, NavLink, Select } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
 import { IconFiles, IconArrowRight, IconStar, IconTrash } from "@tabler/icons-react";
@@ -11,6 +11,7 @@ import FilesGridView from "./filesGridView";
 import FilesTableView from "./filesTableView";
 import UploadFileModal from "./uploadFileModal";
 import NoFilesUploaded from "./noFilesUploaded";
+import { OrganizationSwitcher, UserButton, SignedOut, SignInButton, SignedIn } from "@clerk/nextjs";
 
 type Props = {
   title: string
@@ -59,22 +60,38 @@ export function SideNavLayout({ title }: Props) {
             <Link href={"/"}>
               <MantineLogo size={30} />
             </Link>
-
           </Group>
-          <Button
-            variant="light"
-            leftSection={<IconFiles size={14} />}
-            rightSection={<IconArrowRight size={14} />}
-            component={Link}
-            href={"/dashboard/files"}
+
+          <SignedIn>
+            <Button
+              variant="light"
+              leftSection={<IconFiles size={14} />}
+              rightSection={<IconArrowRight size={14} />}
+              component={Link}
+              href={"/dashboard/files"}
+            >
+              Your files
+            </Button>
+          </SignedIn>
+
+          <Flex
+            gap="md"
+            justify="flex-start"
+            align="center"
+            direction="row"
+            wrap="wrap"
           >
-            Your files
-          </Button>
+            <SignedIn>
+              <OrganizationSwitcher />
+              <UserButton />
+            </SignedIn>
+            <SignedOut>
+              <SignInButton>
+                <Button>Sign In</Button>
+              </SignInButton>
+            </SignedOut>
+          </Flex>
 
-          <Group>
-            <Button variant="default" component={Link} href={"/login"}>Log in</Button>
-            <Button component={Link} href={"/signup"}>Sign up</Button>
-          </Group>
 
         </Group>
       </AppShell.Header>
