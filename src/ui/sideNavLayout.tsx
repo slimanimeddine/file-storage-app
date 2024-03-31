@@ -35,7 +35,6 @@ const linkItems = [
   },
 ]
 
-
 export function SideNavLayout({ title }: Props) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
