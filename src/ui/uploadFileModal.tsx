@@ -4,6 +4,7 @@ import { IconInfoCircle, IconUpload } from "@tabler/icons-react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@clerk/nextjs";
 
 const formSchema = z.object({
   title: z.string({
@@ -27,6 +28,7 @@ function CustomAlert({ text }: { text: string }) {
 }
 
 export default function UploadFileModal() {
+  const auth = useAuth()
   const [opened, { open, close }] = useDisclosure(false);
   const {
     handleSubmit,
@@ -42,9 +44,12 @@ export default function UploadFileModal() {
   })
 
   async function onSubmit(data: FormInput) {
-    console.log(data.file)
+    const fileBuffer = new Uint8Array(await data.file.arrayBuffer())
+    console.log(fileBuffer)
     reset()
   }
+
+  console.log(auth)
 
   return (
     <>
