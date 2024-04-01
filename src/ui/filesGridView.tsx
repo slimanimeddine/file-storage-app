@@ -1,4 +1,4 @@
-import { Avatar, Grid } from "@mantine/core"
+import { Avatar, Grid, Loader, LoadingOverlay } from "@mantine/core"
 import { IconPhoto } from "@tabler/icons-react"
 import Image from "next/image"
 import ActionsMenu from "./actionsMenu"
@@ -94,6 +94,21 @@ export default function FilesGridView() {
   }
 
   const files = useQuery(api.files.getFiles, orgId ? { orgId } : "skip");
+
+  if (files === undefined) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
+        <Loader mt={100} color="blue" size="xl" />
+      </div>
+    )
+  }
 
   if (!files?.length) {
     return <NoFilesUploaded />
