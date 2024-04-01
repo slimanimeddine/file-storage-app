@@ -2,9 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { MutationCtx, QueryCtx, internalMutation } from "./_generated/server";
 
 export async function getUser(ctx: QueryCtx | MutationCtx, tokenIdentifier: string) {
-  const user = await ctx.db.query("users")
-    .withIndex("by_tokenIdentifier", (q) => q.eq("tokenIdentifier", tokenIdentifier))
-    .first()
+  const user = await ctx.db.query("users").withIndex("by_tokenIdentifier", (q) => q.eq("tokenIdentifier", tokenIdentifier)).first()
 
   if (!user) {
     throw new ConvexError("expected user to be defined")

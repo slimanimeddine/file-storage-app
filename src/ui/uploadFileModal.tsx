@@ -50,6 +50,7 @@ export default function UploadFileModal() {
     handleSubmit,
     control,
     formState,
+    setValue,
     reset
   } = useForm<FormInput>({
     resolver: zodResolver(formSchema),
@@ -86,8 +87,8 @@ export default function UploadFileModal() {
         message: "Your file has been uploaded successfully!",
         classNames: classes,
       })
-      reset()
 
+      reset()
     } catch (error) {
       notifications.show({
         color: "red",
@@ -97,11 +98,13 @@ export default function UploadFileModal() {
       })
     }
   }
-
-
   return (
     <>
-      <Modal size="md" centered opened={opened} onClose={close} title={<h4>Upload Your File Here</h4>}>
+      <Modal size="md" centered opened={opened} onClose={() => {
+        close();
+        setValue("file", new File([], ""));
+        setValue("title", "");
+      }} title={<h4>Upload Your File Here</h4>}>
         <form onSubmit={handleSubmit(onSubmit)}
           style={{
             display: "flex",
