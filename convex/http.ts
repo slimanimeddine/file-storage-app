@@ -25,7 +25,7 @@ http.route({
       switch (result.type) {
         case "user.created":
           await ctx.runMutation(internal.users.createUser, {
-            tokenIdentifier: `https://${process.env.CLERK_JWT_ISSUER_DOMAIN}|${result.data.id}`,
+            tokenIdentifier: `${process.env.CLERK_JWT_ISSUER_DOMAIN}|${result.data.id}`,
             // name: `${result.data.first_name ?? ""} ${result.data.last_name ?? ""
             //   }`,
             // image: result.data.image_url,
@@ -33,7 +33,7 @@ http.route({
           break;
         case "user.updated":
           await ctx.runMutation(internal.users.updateUser, {
-            tokenIdentifier: `https://${process.env.CLERK_JWT_ISSUER_DOMAIN}|${result.data.id}`,
+            tokenIdentifier: `${process.env.CLERK_JWT_ISSUER_DOMAIN}|${result.data.id}`,
             name: `${result.data.first_name ?? ""} ${result.data.last_name ?? ""
               }`,
             image: result.data.image_url,
@@ -41,7 +41,7 @@ http.route({
           break;
         case "organizationMembership.created":
           await ctx.runMutation(internal.users.addOrgIdToUser, {
-            tokenIdentifier: `https://${process.env.CLERK_JWT_ISSUER_DOMAIN}|${result.data.public_user_data.user_id}`,
+            tokenIdentifier: `${process.env.CLERK_JWT_ISSUER_DOMAIN}|${result.data.public_user_data.user_id}`,
             orgId: result.data.organization.id,
             // role: result.data.role === "org:admin" ? "admin" : "member",
           });
@@ -49,7 +49,7 @@ http.route({
         case "organizationMembership.updated":
           console.log(result.data.role);
           await ctx.runMutation(internal.users.updateRoleInOrgForUser, {
-            tokenIdentifier: `https://${process.env.CLERK_JWT_ISSUER_DOMAIN}|${result.data.public_user_data.user_id}`,
+            tokenIdentifier: `${process.env.CLERK_JWT_ISSUER_DOMAIN}|${result.data.public_user_data.user_id}`,
             orgId: result.data.organization.id,
             role: result.data.role === "org:admin" ? "admin" : "member",
           });

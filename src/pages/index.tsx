@@ -5,8 +5,6 @@ import Head from "next/head";
 import Link from "next/link";
 
 export default function Page() {
-  // const files = useQuery(api.files.getFiles, orgId ? { orgId } : "skip");
-
   return (
     <RootLayout>
       <Head>

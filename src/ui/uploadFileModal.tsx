@@ -51,7 +51,6 @@ export default function UploadFileModal() {
     control,
     formState,
     setValue,
-    reset
   } = useForm<FormInput>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -88,7 +87,10 @@ export default function UploadFileModal() {
         classNames: classes,
       })
 
-      reset()
+      close();
+      setValue("file", new File([], ""));
+      setValue("title", "");
+
     } catch (error) {
       notifications.show({
         color: "red",

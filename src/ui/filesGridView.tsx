@@ -2,8 +2,13 @@ import { Avatar, Grid } from "@mantine/core"
 import { IconPhoto } from "@tabler/icons-react"
 import Image from "next/image"
 import ActionsMenu from "./actionsMenu"
+import { useQuery } from "convex/react"
+import { api } from "../../convex/_generated/api"
+import { useOrganization, useUser } from "@clerk/nextjs"
+import NoFilesUploaded from "./noFilesUploaded"
+import { Doc } from "../../convex/_generated/dataModel"
 
-function SingleFile() {
+function SingleFile({ file }: { file: Doc<"files"> }) {
   return (
     <div
       style={{
@@ -30,7 +35,7 @@ function SingleFile() {
           }}
         >
           <IconPhoto />
-          another screenshot
+          {file.name}
         </span>
         <ActionsMenu />
       </div>
@@ -79,14 +84,26 @@ function SingleFile() {
 }
 
 export default function FilesGridView() {
+  const organization = useOrganization()
+  const user = useUser()
+
+  let orgId: string | undefined = undefined;
+
+  if (organization.isLoaded && user.isLoaded) {
+    orgId = organization.organization?.id ?? user.user?.id
+  }
+
+  const files = useQuery(api.files.getFiles, orgId ? { orgId } : "skip");
+
+  if (!files?.length) {
+    return <NoFilesUploaded />
+  }
+
   return (
     <Grid>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}><SingleFile /></Grid.Col>
+      {files?.map(file => (
+        <Grid.Col key={file._id} span={{ base: 12, md: 6, lg: 4 }}><SingleFile file={file} /></Grid.Col>
+      ))}
     </Grid>
   )
 }
