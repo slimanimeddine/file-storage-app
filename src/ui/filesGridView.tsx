@@ -37,7 +37,7 @@ function SingleFile({ file }: { file: Doc<"files"> }) {
           <IconPhoto />
           {file.name}
         </span>
-        <ActionsMenu />
+        <ActionsMenu file={file} />
       </div>
       <div
         style={{

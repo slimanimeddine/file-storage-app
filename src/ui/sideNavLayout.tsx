@@ -10,7 +10,6 @@ import CustomSegmentedControl from "./customSegmentedControl";
 import FilesGridView from "./filesGridView";
 import FilesTableView from "./filesTableView";
 import UploadFileModal from "./uploadFileModal";
-import NoFilesUploaded from "./noFilesUploaded";
 import { OrganizationSwitcher, UserButton, SignedOut, SignInButton, SignedIn } from "@clerk/nextjs";
 
 type Props = {
@@ -133,7 +132,6 @@ export function SideNavLayout({ title }: Props) {
         </div>
         {view === "table" && <FilesTableView />}
         {view === "grid" && <FilesGridView />}
-        <NoFilesUploaded />
       </AppShell.Main>
     </AppShell >
   );
