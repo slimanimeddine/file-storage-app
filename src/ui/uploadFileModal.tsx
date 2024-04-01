@@ -7,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useOrganization, useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import classes from "@/styles/uploadFile.module.css"
+import { notifications } from "@mantine/notifications";
 
 const formSchema = z.object({
   title: z.string({
@@ -33,14 +35,13 @@ export default function UploadFileModal() {
   const organization = useOrganization()
   const user = useUser()
 
-  let orgId: string | undefined;
+  let orgId: string | undefined = undefined;
 
   if (organization.isLoaded && user.isLoaded) {
     orgId = organization.organization?.id ?? user.user?.id
   }
 
   const createFile = useMutation(api.files.createFile);
-
 
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
 
@@ -58,7 +59,6 @@ export default function UploadFileModal() {
     }
   })
 
-
   async function onSubmit(data: FormInput) {
     if (!orgId) return;
 
@@ -74,13 +74,28 @@ export default function UploadFileModal() {
 
     const { storageId } = await result.json();
 
-    await createFile({
-      name: data.title,
-      fileId: storageId,
-      orgId
-    })
+    try {
+      await createFile({
+        name: data.title,
+        fileId: storageId,
+        orgId
+      })
 
-    reset()
+      notifications.show({
+        title: "File uploaded successfully",
+        message: "Your file has been uploaded successfully!",
+        classNames: classes,
+      })
+      reset()
+
+    } catch (error) {
+      notifications.show({
+        color: "red",
+        title: "Error uploading file",
+        message: "There was an error uploading your file. Please try again.",
+        classNames: classes,
+      })
+    }
   }
 
 

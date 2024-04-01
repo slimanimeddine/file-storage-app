@@ -15,7 +15,7 @@ export const generateUploadUrl = mutation(async (ctx) => {
 async function hasAccessToOrg(ctx: QueryCtx | MutationCtx, tokenIdentifier: string, orgId: string) {
   const user = await getUser(ctx, tokenIdentifier)
 
-  const hasAccess = user.orgIds.includes(orgId) && user.tokenIdentifier.includes(orgId)
+  const hasAccess = user.orgIds.includes(orgId) || user.tokenIdentifier.includes(orgId)
 
   return hasAccess
 }
@@ -63,7 +63,6 @@ export const getFiles = query({
     if (!hasAccess) {
       return []
     }
-
 
     return ctx.db.query("files").withIndex("by_orgId", q => q.eq("orgId", args.orgId)).collect()
   }

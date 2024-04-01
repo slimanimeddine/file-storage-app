@@ -21,7 +21,7 @@ export default function Page() {
         <Container className={classes.container} size="md">
           <Title className={classes.title}>The easiest way to upload and share files with your company</Title>
           <Text className={classes.description} size="xl" mt="xl">
-            Make an account an start managing your files in less than a minute.
+            Make an account and start managing your files in less than a minute.
           </Text>
 
           <Button variant="gradient" size="xl" radius="xl" className={classes.control} component={Link} href={"/dashboard/files"}>

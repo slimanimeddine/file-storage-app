@@ -26,9 +26,9 @@ http.route({
         case "user.created":
           await ctx.runMutation(internal.users.createUser, {
             tokenIdentifier: `https://${process.env.CLERK_JWT_ISSUER_DOMAIN}|${result.data.id}`,
-            name: `${result.data.first_name ?? ""} ${result.data.last_name ?? ""
-              }`,
-            image: result.data.image_url,
+            // name: `${result.data.first_name ?? ""} ${result.data.last_name ?? ""
+            //   }`,
+            // image: result.data.image_url,
           });
           break;
         case "user.updated":
@@ -43,7 +43,7 @@ http.route({
           await ctx.runMutation(internal.users.addOrgIdToUser, {
             tokenIdentifier: `https://${process.env.CLERK_JWT_ISSUER_DOMAIN}|${result.data.public_user_data.user_id}`,
             orgId: result.data.organization.id,
-            role: result.data.role === "org:admin" ? "admin" : "member",
+            // role: result.data.role === "org:admin" ? "admin" : "member",
           });
           break;
         case "organizationMembership.updated":
