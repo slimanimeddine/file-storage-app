@@ -10,7 +10,9 @@ import CustomSegmentedControl from "./customSegmentedControl";
 import FilesGridView from "./filesGridView";
 import FilesTableView from "./filesTableView";
 import UploadFileModal from "./uploadFileModal";
-import { OrganizationSwitcher, UserButton, SignedOut, SignInButton, SignedIn } from "@clerk/nextjs";
+import { OrganizationSwitcher, UserButton, SignedOut, SignInButton, SignedIn, useOrganization, useUser } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 type Props = {
   title: string
@@ -35,10 +37,22 @@ const linkItems = [
 ]
 
 export function SideNavLayout({ title }: Props) {
+  const [query, setQuery] = useState("");
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const pathname = usePathname()
   const [view, setView] = useState("grid");
+
+  const organization = useOrganization()
+  const user = useUser()
+
+  let orgId: string | undefined = undefined;
+
+  if (organization.isLoaded && user.isLoaded) {
+    orgId = organization.organization?.id ?? user.user?.id
+  }
+
+  const files = useQuery(api.files.getFiles, orgId ? { orgId, query } : "skip");
 
   return (
     <AppShell
@@ -112,7 +126,7 @@ export function SideNavLayout({ title }: Props) {
           alignItems: "center",
         }}>
           <h1>{title}</h1>
-          <SearchFilesInput />
+          <SearchFilesInput setQuery={setQuery} />
           <UploadFileModal />
         </div>
 
@@ -131,7 +145,7 @@ export function SideNavLayout({ title }: Props) {
           />
         </div>
         {view === "table" && <FilesTableView />}
-        {view === "grid" && <FilesGridView />}
+        {view === "grid" && <FilesGridView files={files} />}
       </AppShell.Main>
     </AppShell >
   );

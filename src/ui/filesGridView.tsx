@@ -2,14 +2,13 @@ import { Avatar, Grid, Loader } from "@mantine/core"
 import { IconCsv, IconPdf, IconPhoto } from "@tabler/icons-react"
 import Image from "next/image"
 import ActionsMenu from "./actionsMenu"
-import { useQuery } from "convex/react"
-import { api } from "../../convex/_generated/api"
-import { useOrganization, useUser } from "@clerk/nextjs"
 import NoFilesUploaded from "./noFilesUploaded"
 import { Doc } from "../../convex/_generated/dataModel"
 import { ReactNode } from "react"
 
-function SingleFile({ file }: { file: Doc<"files"> & { url: string | null } }) {
+type File = Doc<"files"> & { url: string | null }
+
+function SingleFile({ file }: { file: File }) {
   const typeIcons = {
     image: <IconPhoto />,
     pdf: <IconPdf />,
@@ -113,18 +112,8 @@ function SingleFile({ file }: { file: Doc<"files"> & { url: string | null } }) {
   )
 }
 
-export default function FilesGridView() {
-  const organization = useOrganization()
-  const user = useUser()
 
-  let orgId: string | undefined = undefined;
-
-  if (organization.isLoaded && user.isLoaded) {
-    orgId = organization.organization?.id ?? user.user?.id
-  }
-
-  const files = useQuery(api.files.getFiles, orgId ? { orgId } : "skip");
-
+export default function FilesGridView({ files }: { files: File[] | undefined }) {
   const isLoading = files === undefined;
 
   return (
