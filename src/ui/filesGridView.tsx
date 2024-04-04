@@ -1,5 +1,5 @@
-import { Avatar, Grid, Loader, LoadingOverlay } from "@mantine/core"
-import { IconPhoto } from "@tabler/icons-react"
+import { Avatar, Grid, Loader } from "@mantine/core"
+import { IconCsv, IconPdf, IconPhoto } from "@tabler/icons-react"
 import Image from "next/image"
 import ActionsMenu from "./actionsMenu"
 import { useQuery } from "convex/react"
@@ -7,8 +7,15 @@ import { api } from "../../convex/_generated/api"
 import { useOrganization, useUser } from "@clerk/nextjs"
 import NoFilesUploaded from "./noFilesUploaded"
 import { Doc } from "../../convex/_generated/dataModel"
+import { ReactNode } from "react"
 
-function SingleFile({ file }: { file: Doc<"files"> }) {
+function SingleFile({ file }: { file: Doc<"files"> & { url: string | null } }) {
+  const typeIcons = {
+    image: <IconPhoto />,
+    pdf: <IconPdf />,
+    csv: <IconCsv />
+  } as Record<Doc<"files">["type"], ReactNode>
+
   return (
     <div
       style={{
@@ -34,7 +41,7 @@ function SingleFile({ file }: { file: Doc<"files"> }) {
             gap: 2
           }}
         >
-          <IconPhoto />
+          {typeIcons[file.type]}
           {file.name}
         </span>
         <ActionsMenu file={file} />
@@ -44,9 +51,32 @@ function SingleFile({ file }: { file: Doc<"files"> }) {
           display: "flex",
           justifyContent: "center",
         }}>
-        <Image style={{
-          objectFit: "contain",
-        }} src={"/imed-02.jpg"} width={100} height={200} alt="file" />
+
+        {file.type === "image" && file.url && (
+          <Image
+            style={{
+              objectFit: "contain",
+            }}
+            src={file.url ?? ""}
+            width={100}
+            height={200}
+            alt={file.name}
+          />
+        )}
+
+        {file.type === "pdf" && (
+          <IconPdf style={{
+            width: 100,
+            height: 200,
+          }} />
+        )}
+
+        {file.type === "csv" && (
+          <IconCsv style={{
+            width: 100,
+            height: 200,
+          }} />
+        )}
       </div>
       <div
         style={{
@@ -95,30 +125,30 @@ export default function FilesGridView() {
 
   const files = useQuery(api.files.getFiles, orgId ? { orgId } : "skip");
 
-  if (files === undefined) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100%",
-        }}
-      >
-        <Loader mt={100} color="blue" size="xl" />
-      </div>
-    )
-  }
-
-  if (!files?.length) {
-    return <NoFilesUploaded />
-  }
+  const isLoading = files === undefined;
 
   return (
-    <Grid>
-      {files?.map(file => (
-        <Grid.Col key={file._id} span={{ base: 12, md: 6, lg: 4 }}><SingleFile file={file} /></Grid.Col>
-      ))}
-    </Grid>
+    <>
+      {isLoading && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <Loader mt={100} color="blue" size="xl" />
+        </div>
+      )}
+      {files && files.length === 0 && <NoFilesUploaded />}
+      {files && files.length > 0 && (
+        <Grid>
+          {files?.map(file => (
+            <Grid.Col key={file._id} span={{ base: 12, md: 6, lg: 4 }}><SingleFile file={file} /></Grid.Col>
+          ))}
+        </Grid>
+      )}
+    </>
   )
 }

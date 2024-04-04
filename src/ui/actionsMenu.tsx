@@ -32,7 +32,6 @@ function Delete({ file }: { file: Doc<"files"> }) {
     },
   });
 
-  // return <Button onClick={openModal}>Open confirm modal</Button>;
   return (
     <Menu.Item
       component="button"
@@ -45,7 +44,7 @@ function Delete({ file }: { file: Doc<"files"> }) {
   )
 }
 
-export default function ActionsMenu({ file }: { file: Doc<"files"> }) {
+export default function ActionsMenu({ file }: { file: Doc<"files"> & { url: string | null } }) {
   return (
     <Menu shadow="md">
       <Menu.Target>
@@ -56,7 +55,10 @@ export default function ActionsMenu({ file }: { file: Doc<"files"> }) {
       </Menu.Target>
 
       <Menu.Dropdown>
-        <Menu.Item leftSection={<IconDownload style={{ width: rem(14), height: rem(14) }} />}>
+        <Menu.Item component="button" onClick={() => {
+          if (!file.url) return
+          window.open(file.url, "_blank")
+        }} leftSection={<IconDownload style={{ width: rem(14), height: rem(14) }} />}>
           Download
         </Menu.Item>
         <Menu.Item leftSection={<IconStar style={{ width: rem(14), height: rem(14) }} />}>

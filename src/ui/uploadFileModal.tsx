@@ -9,6 +9,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import classes from "@/styles/uploadFile.module.css"
 import { notifications } from "@mantine/notifications";
+import { Doc } from "../../convex/_generated/dataModel";
 
 const formSchema = z.object({
   title: z.string({
@@ -74,11 +75,20 @@ export default function UploadFileModal() {
 
     const { storageId } = await result.json();
 
+    const types = {
+      "image/png": "image",
+      "image/jpg": "image",
+      "image/jpeg": "image",
+      "application/pdf": "pdf",
+      "text/csv": "csv"
+    } as Record<string, Doc<"files">["type"]>
+
     try {
       await createFile({
         name: data.title,
         fileId: storageId,
-        orgId
+        orgId,
+        type: types[fileType]
       })
 
       notifications.show({
