@@ -1,7 +1,7 @@
 import { AppShell, Burger, Button, Flex, Group, NavLink, Select } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
-import { IconFiles, IconArrowRight, IconStar, IconTrash } from "@tabler/icons-react";
+import { IconFiles, IconStar, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -74,18 +74,6 @@ export function SideNavLayout({ title }: Props) {
             </Link>
           </Group>
 
-          <SignedIn>
-            <Button
-              variant="light"
-              leftSection={<IconFiles size={14} />}
-              rightSection={<IconArrowRight size={14} />}
-              component={Link}
-              href={"/dashboard/files"}
-            >
-              Your files
-            </Button>
-          </SignedIn>
-
           <Flex
             gap="md"
             justify="flex-start"
@@ -104,7 +92,6 @@ export function SideNavLayout({ title }: Props) {
             </SignedOut>
           </Flex>
 
-
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">
@@ -120,22 +107,25 @@ export function SideNavLayout({ title }: Props) {
         ))}
       </AppShell.Navbar>
       <AppShell.Main>
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}>
+        <Flex
+          direction={{ base: "column", sm: "row" }}
+          gap={{ base: "sm", sm: "lg" }}
+          justify={{ sm: "space-between" }}
+          align={{ sm: "center" }}
+          mb={20}
+        >
           <h1>{title}</h1>
           <SearchFilesInput setQuery={setQuery} />
           <UploadFileModal />
-        </div>
+        </Flex>
 
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 20
-        }}>
+        <Flex
+          direction={{ base: "column", sm: "row" }}
+          gap={{ base: "sm", sm: "lg" }}
+          justify={{ sm: "space-between" }}
+          align={{ sm: "center" }}
+          mb={20}
+        >
           <CustomSegmentedControl value={view} setValue={setView} />
           <Select
             placeholder="Filter files"
@@ -143,9 +133,10 @@ export function SideNavLayout({ title }: Props) {
             defaultValue="All"
             allowDeselect={false}
           />
-        </div>
+        </Flex>
+
         {view === "table" && <FilesTableView />}
-        {view === "grid" && <FilesGridView files={files} />}
+        {view === "grid" && <FilesGridView files={files} query={query} />}
       </AppShell.Main>
     </AppShell >
   );

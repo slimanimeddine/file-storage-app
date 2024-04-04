@@ -113,7 +113,7 @@ function SingleFile({ file }: { file: File }) {
 }
 
 
-export default function FilesGridView({ files }: { files: File[] | undefined }) {
+export default function FilesGridView({ files, query }: { files: File[] | undefined, query: string }) {
   const isLoading = files === undefined;
 
   return (
@@ -130,11 +130,15 @@ export default function FilesGridView({ files }: { files: File[] | undefined }) 
           <Loader mt={100} color="blue" size="xl" />
         </div>
       )}
-      {files && files.length === 0 && <NoFilesUploaded />}
+
+      {files && !query && files.length === 0 && <NoFilesUploaded />}
+
       {files && files.length > 0 && (
         <Grid>
           {files?.map(file => (
-            <Grid.Col key={file._id} span={{ base: 12, md: 6, lg: 4 }}><SingleFile file={file} /></Grid.Col>
+            <Grid.Col key={file._id} span={{ base: 12, md: 6, lg: 4 }}>
+              <SingleFile file={file} />
+            </Grid.Col>
           ))}
         </Grid>
       )}
