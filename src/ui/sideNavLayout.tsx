@@ -135,7 +135,7 @@ export function SideNavLayout({ title }: Props) {
           />
         </Flex>
 
-        {view === "table" && <FilesTableView />}
+        {view === "table" && <FilesTableView files={files} />}
         {view === "grid" && <FilesGridView files={files} query={query} />}
       </AppShell.Main>
     </AppShell >

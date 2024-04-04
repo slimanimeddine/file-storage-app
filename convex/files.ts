@@ -72,7 +72,7 @@ export const getFiles = query({
 
     const query = args.query
 
-    files = query ? files.filter(file => file.name.includes(query)) : files
+    files = query ? files.filter(file => file.name.toLowerCase().includes(query.toLowerCase())) : files
 
     const filesWithUrls = await Promise.all(
       files.map(async (file) => ({

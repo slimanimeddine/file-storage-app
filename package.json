@@ -19,6 +19,7 @@
     "@tabler/icons-react": "^3.1.0",
     "clsx": "^2.1.0",
     "convex": "^1.10.0",
+    "dayjs": "^1.11.10",
     "mantine-datatable": "^7.6.1",
     "next": "14.1.4",
     "react": "^18",

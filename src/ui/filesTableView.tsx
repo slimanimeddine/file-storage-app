@@ -1,48 +1,45 @@
 import { DataTable } from "mantine-datatable";
 import ActionsMenu from "./actionsMenu";
+import dayjs from "dayjs"
+import { useUser } from "@clerk/nextjs"
+import { Doc } from "../../convex/_generated/dataModel";
 
-const records = [
-  {
-    name: "Document.pdf",
-    type: "PDF",
-    user: "John Doe",
-    uploadedOn: "2021-09-01",
 
-  },
-  {
-    name: "Spreadsheet.xlsx",
-    type: "Excel",
-    user: "Jane Doe",
-    uploadedOn: "2021-09-01",
-  },
-  {
-    name: "Presentation.ppt",
-    type: "PowerPoint",
-    user: "John Doe",
-    uploadedOn: "2021-09-01",
-  },
-]
+type File = Doc<"files"> & { url: string | null }
 
-export default function FilesTableView() {
+export default function FilesTableView({ files }: { files: File[] | undefined }) {
+  const user = useUser()
   return (
     <DataTable
       withTableBorder
       borderRadius="md"
       highlightOnHover
-      minHeight={150}
+      minHeight={50}
       columns={[
-        { accessor: "name" },
-        { accessor: "type" },
-        { accessor: "user" },
-        { accessor: "uploadedOn" },
+        {
+          accessor: "name",
+          render: (file) => file.name
+        },
+        {
+          accessor: "type",
+          render: (file) => file.type
+        },
+        {
+          accessor: "user",
+          render: () => user.user?.fullName
+        },
+        {
+          accessor: "uploadedOn",
+          render: (file) => `${dayjs(file._creationTime)}`
+        },
         {
           accessor: "actions",
-          render: () => (
-            <ActionsMenu />
+          render: (file) => (
+            <ActionsMenu file={file} />
           )
         }
       ]}
-      records={records}
+      records={files}
     />
   )
 }

@@ -5,6 +5,10 @@ import ActionsMenu from "./actionsMenu"
 import NoFilesUploaded from "./noFilesUploaded"
 import { Doc } from "../../convex/_generated/dataModel"
 import { ReactNode } from "react"
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
+import { useUser } from "@clerk/nextjs"
+dayjs.extend(relativeTime)
 
 type File = Doc<"files"> & { url: string | null }
 
@@ -14,6 +18,8 @@ function SingleFile({ file }: { file: File }) {
     pdf: <IconPdf />,
     csv: <IconCsv />
   } as Record<Doc<"files">["type"], ReactNode>
+
+  const user = useUser()
 
   return (
     <div
@@ -37,7 +43,7 @@ function SingleFile({ file }: { file: File }) {
           style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: 2
+            gap: 10
           }}
         >
           {typeIcons[file.type]}
@@ -91,13 +97,13 @@ function SingleFile({ file }: { file: File }) {
             gap: 2
           }}
         >
-          <Avatar src={"/imed-02.jpg"} size="sm" alt="it's me" />
+          <Avatar src={user.user?.imageUrl} size="sm" alt="it's me" />
           <span
             style={{
               fontSize: 15,
             }}
           >
-            slimani
+            {user.user?.firstName}
           </span>
         </span>
         <span
@@ -105,7 +111,7 @@ function SingleFile({ file }: { file: File }) {
             fontSize: 15,
           }}
         >
-          Uploaded on today at 5:40 PM
+          Uploaded {dayjs(file._creationTime).fromNow()}
         </span>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { Doc } from "../../convex/_generated/dataModel"
 import { modals } from "@mantine/modals"
 import { notifications } from "@mantine/notifications"
 import classes from "@/styles/uploadFile.module.css"
+import { usePathname } from "next/navigation"
 
 function Delete({ file }: { file: Doc<"files"> }) {
   const deleteFile = useMutation(api.files.deleteFile)
@@ -45,6 +46,13 @@ function Delete({ file }: { file: Doc<"files"> }) {
 }
 
 export default function ActionsMenu({ file }: { file: Doc<"files"> & { url: string | null } }) {
+  const pathname = usePathname()
+  const pathnames = {
+    files: "/dashboard/files",
+    favorites: "/dashboard/favorites",
+    trash: "/dashboard/trash",
+  }
+
   return (
     <Menu shadow="md">
       <Menu.Target>
@@ -55,33 +63,45 @@ export default function ActionsMenu({ file }: { file: Doc<"files"> & { url: stri
       </Menu.Target>
 
       <Menu.Dropdown>
-        <Menu.Item component="button" onClick={() => {
-          if (!file.url) return
-          window.open(file.url, "_blank")
-        }} leftSection={<IconDownload style={{ width: rem(14), height: rem(14) }} />}>
-          Download
-        </Menu.Item>
-        <Menu.Item leftSection={<IconStar style={{ width: rem(14), height: rem(14) }} />}>
-          Favorite
-        </Menu.Item>
-        <Menu.Item leftSection={<IconStar style={{ width: rem(14), height: rem(14) }} />}>
-          Unfavorite
-        </Menu.Item>
+        {/* download */}
+        {pathname === pathnames.files && (
+          <Menu.Item
+            component="button"
+            onClick={() => {
+              if (!file.url) return
+              window.open(file.url, "_blank")
+            }}
+            leftSection={<IconDownload style={{ width: rem(14), height: rem(14) }} />}
+          >
+            Download
+          </Menu.Item>
+        )}
 
-        {/* <Menu.Item
-          component="button"
-          onClick={() => deleteFile({
-            fileId: file._id
-          })}
-          color="red"
-          leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
-        >
-          Delete
-        </Menu.Item> */}
-        <Delete file={file} />
-        <Menu.Item color="green" leftSection={<IconArrowBack style={{ width: rem(14), height: rem(14) }} />}>
-          Restore
-        </Menu.Item>
+        {/* favorite */}
+        {pathname === pathnames.files && (
+          <Menu.Item leftSection={<IconStar style={{ width: rem(14), height: rem(14) }} />}>
+            Favorite
+          </Menu.Item>
+        )}
+
+        {/* unfavorite */}
+        {pathname === pathnames.favorites && (
+          <Menu.Item leftSection={<IconStar style={{ width: rem(14), height: rem(14) }} />}>
+            Unfavorite
+          </Menu.Item>
+        )}
+
+        {/* delete */}
+        {(pathname === pathnames.files || pathname === pathnames.favorites) && (
+          <Delete file={file} />
+        )}
+
+        {/* restore */}
+        {pathname === pathnames.trash && (
+          <Menu.Item color="green" leftSection={<IconArrowBack style={{ width: rem(14), height: rem(14) }} />}>
+            Restore
+          </Menu.Item>
+        )}
 
       </Menu.Dropdown>
     </Menu>
