@@ -2,13 +2,40 @@ import { DataTable } from "mantine-datatable";
 import ActionsMenu from "./actionsMenu";
 import dayjs from "dayjs"
 import { useUser } from "@clerk/nextjs"
-import { Doc } from "../../convex/_generated/dataModel";
+import { TFile } from "@/types"
 
-
-type File = Doc<"files"> & { url: string | null }
-
-export default function FilesTableView({ files }: { files: File[] | undefined }) {
+export default function FilesTableView({ files }: { files: TFile[] | null | undefined }) {
   const user = useUser()
+
+  if (!files) {
+    return (
+      <DataTable
+        withTableBorder
+        borderRadius="md"
+        highlightOnHover
+        minHeight={50}
+        columns={[
+          {
+            accessor: "name",
+          },
+          {
+            accessor: "type",
+          },
+          {
+            accessor: "user",
+          },
+          {
+            accessor: "uploadedOn",
+          },
+          {
+            accessor: "actions",
+          }
+        ]}
+        records={[]}
+      />
+    )
+  }
+
   return (
     <DataTable
       withTableBorder

@@ -13,9 +13,11 @@ import UploadFileModal from "./uploadFileModal";
 import { OrganizationSwitcher, UserButton, SignedOut, SignInButton, SignedIn, useOrganization, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { TFile } from "@/types";
 
 type Props = {
-  title: string
+  title: string,
+  favorites?: boolean,
 };
 
 const linkItems = [
@@ -36,12 +38,13 @@ const linkItems = [
   },
 ]
 
-export function SideNavLayout({ title }: Props) {
-  const [query, setQuery] = useState("");
+export function SideNavLayout({ title, favorites = false }: Props) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const pathname = usePathname()
   const [view, setView] = useState("grid");
+
+  const [query, setQuery] = useState("");
 
   const organization = useOrganization()
   const user = useUser()
@@ -52,8 +55,7 @@ export function SideNavLayout({ title }: Props) {
     orgId = organization.organization?.id ?? user.user?.id
   }
 
-  const files = useQuery(api.files.getFiles, orgId ? { orgId, query } : "skip");
-
+  const files = useQuery(api.files.getFiles, orgId ? { orgId, query, favorites } : "skip") as TFile[] | undefined | null;
   return (
     <AppShell
       header={{ height: 60 }}

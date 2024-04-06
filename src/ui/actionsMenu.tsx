@@ -2,13 +2,13 @@ import { ActionIcon, Menu, rem, Text } from "@mantine/core"
 import { IconDotsVertical, IconDownload, IconStar, IconTrash, IconArrowBack } from "@tabler/icons-react"
 import { useMutation } from "convex/react"
 import { api } from "../../convex/_generated/api"
-import { Doc } from "../../convex/_generated/dataModel"
 import { modals } from "@mantine/modals"
 import { notifications } from "@mantine/notifications"
 import classes from "@/styles/uploadFile.module.css"
 import { usePathname } from "next/navigation"
+import { TFile } from "@/types"
 
-function Delete({ file }: { file: Doc<"files"> }) {
+function Delete({ file }: { file: TFile }) {
   const deleteFile = useMutation(api.files.deleteFile)
 
   const openModal = () => modals.openConfirmModal({
@@ -45,13 +45,15 @@ function Delete({ file }: { file: Doc<"files"> }) {
   )
 }
 
-export default function ActionsMenu({ file }: { file: Doc<"files"> & { url: string | null } }) {
+export default function ActionsMenu({ file }: { file: TFile }) {
   const pathname = usePathname()
   const pathnames = {
     files: "/dashboard/files",
     favorites: "/dashboard/favorites",
     trash: "/dashboard/trash",
   }
+
+  const toggleFavorite = useMutation(api.files.toggleFavorite)
 
   return (
     <Menu shadow="md">
@@ -79,7 +81,14 @@ export default function ActionsMenu({ file }: { file: Doc<"files"> & { url: stri
 
         {/* favorite */}
         {pathname === pathnames.files && (
-          <Menu.Item leftSection={<IconStar style={{ width: rem(14), height: rem(14) }} />}>
+          <Menu.Item
+            leftSection={<IconStar style={{ width: rem(14), height: rem(14) }} />}
+            onClick={() => {
+              toggleFavorite({
+                fileId: file._id
+              })
+            }}
+          >
             Favorite
           </Menu.Item>
         )}

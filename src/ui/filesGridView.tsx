@@ -9,10 +9,10 @@ import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import { useUser } from "@clerk/nextjs"
 dayjs.extend(relativeTime)
+import { TFile } from "@/types"
 
-type File = Doc<"files"> & { url: string | null }
 
-function SingleFile({ file }: { file: File }) {
+function SingleFile({ file }: { file: TFile }) {
   const typeIcons = {
     image: <IconPhoto />,
     pdf: <IconPdf />,
@@ -118,8 +118,7 @@ function SingleFile({ file }: { file: File }) {
   )
 }
 
-
-export default function FilesGridView({ files, query }: { files: File[] | undefined, query: string }) {
+export default function FilesGridView({ files, query }: { files: TFile[] | null | undefined, query: string }) {
   const isLoading = files === undefined;
 
   return (
