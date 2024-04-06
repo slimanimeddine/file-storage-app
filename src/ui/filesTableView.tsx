@@ -3,8 +3,9 @@ import ActionsMenu from "./actionsMenu";
 import dayjs from "dayjs"
 import { useUser } from "@clerk/nextjs"
 import { TFile } from "@/types"
+import { Doc } from "../../convex/_generated/dataModel";
 
-export default function FilesTableView({ files }: { files: TFile[] | null | undefined }) {
+export default function FilesTableView({ files, favorites }: { files: TFile[] | null | undefined, favorites: Doc<"favorites">[] | undefined }) {
   const user = useUser()
 
   if (!files) {
@@ -62,7 +63,7 @@ export default function FilesTableView({ files }: { files: TFile[] | null | unde
         {
           accessor: "actions",
           render: (file) => (
-            <ActionsMenu file={file} />
+            <ActionsMenu favorites={favorites} file={file} />
           )
         }
       ]}

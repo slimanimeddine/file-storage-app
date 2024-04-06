@@ -7,6 +7,7 @@ import { notifications } from "@mantine/notifications"
 import classes from "@/styles/uploadFile.module.css"
 import { usePathname } from "next/navigation"
 import { TFile } from "@/types"
+import { Doc } from "../../convex/_generated/dataModel"
 
 function Delete({ file }: { file: TFile }) {
   const deleteFile = useMutation(api.files.deleteFile)
@@ -45,7 +46,7 @@ function Delete({ file }: { file: TFile }) {
   )
 }
 
-export default function ActionsMenu({ file }: { file: TFile }) {
+export default function ActionsMenu({ file, favorites }: { file: TFile, favorites: Doc<"favorites">[] | undefined }) {
   const pathname = usePathname()
   const pathnames = {
     files: "/dashboard/files",
@@ -54,6 +55,7 @@ export default function ActionsMenu({ file }: { file: TFile }) {
   }
 
   const toggleFavorite = useMutation(api.files.toggleFavorite)
+  const isFavorited = favorites?.some(f => f.fileId === file._id)
 
   return (
     <Menu shadow="md">
@@ -79,8 +81,7 @@ export default function ActionsMenu({ file }: { file: TFile }) {
           </Menu.Item>
         )}
 
-        {/* favorite */}
-        {pathname === pathnames.files && (
+        {/* {pathname === pathnames.files && (
           <Menu.Item
             leftSection={<IconStar style={{ width: rem(14), height: rem(14) }} />}
             onClick={() => {
@@ -91,14 +92,29 @@ export default function ActionsMenu({ file }: { file: TFile }) {
           >
             Favorite
           </Menu.Item>
-        )}
+        )} */}
 
-        {/* unfavorite */}
-        {pathname === pathnames.favorites && (
-          <Menu.Item leftSection={<IconStar style={{ width: rem(14), height: rem(14) }} />}>
-            Unfavorite
-          </Menu.Item>
-        )}
+        {isFavorited ? (<Menu.Item
+          leftSection={<IconStar style={{ width: rem(14), height: rem(14) }} />}
+          onClick={() => {
+            toggleFavorite({
+              fileId: file._id
+            })
+          }}
+        >
+          Unfavorite
+        </Menu.Item>)
+          : (<Menu.Item
+            leftSection={<IconStar style={{ width: rem(14), height: rem(14) }} />}
+            onClick={() => {
+              toggleFavorite({
+                fileId: file._id
+              })
+            }}
+          >
+            Favorite
+          </Menu.Item>)
+        }
 
         {/* delete */}
         {(pathname === pathnames.files || pathname === pathnames.favorites) && (

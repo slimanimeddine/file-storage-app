@@ -17,7 +17,7 @@ import { TFile } from "@/types";
 
 type Props = {
   title: string,
-  favorites?: boolean,
+  isFavorites?: boolean,
 };
 
 const linkItems = [
@@ -38,7 +38,7 @@ const linkItems = [
   },
 ]
 
-export function SideNavLayout({ title, favorites = false }: Props) {
+export function SideNavLayout({ title, isFavorites = false }: Props) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const pathname = usePathname()
@@ -55,7 +55,13 @@ export function SideNavLayout({ title, favorites = false }: Props) {
     orgId = organization.organization?.id ?? user.user?.id
   }
 
-  const files = useQuery(api.files.getFiles, orgId ? { orgId, query, favorites } : "skip") as TFile[] | undefined | null;
+  const favorites = useQuery(
+    api.files.getAllFavorites,
+    orgId ? { orgId } : "skip"
+  )
+
+  const files = useQuery(api.files.getFiles, orgId ? { orgId, query, favorites: isFavorites } : "skip") as TFile[] | undefined | null;
+
   return (
     <AppShell
       header={{ height: 60 }}
@@ -137,8 +143,8 @@ export function SideNavLayout({ title, favorites = false }: Props) {
           />
         </Flex>
 
-        {view === "table" && <FilesTableView files={files} />}
-        {view === "grid" && <FilesGridView files={files} query={query} />}
+        {view === "table" && <FilesTableView favorites={favorites} files={files} />}
+        {view === "grid" && <FilesGridView favorites={favorites} files={files} query={query} />}
       </AppShell.Main>
     </AppShell >
   );

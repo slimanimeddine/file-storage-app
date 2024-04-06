@@ -7,7 +7,7 @@ export default function Page() {
       <Head>
         <title>Dashboard | Favorites</title>
       </Head>
-      <SideNavLayout title="Favorites" favorites={true} />
+      <SideNavLayout title="Favorites" isFavorites={true} />
     </>
   )
 }

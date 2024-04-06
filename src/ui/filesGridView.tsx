@@ -12,7 +12,7 @@ dayjs.extend(relativeTime)
 import { TFile } from "@/types"
 
 
-function SingleFile({ file }: { file: TFile }) {
+function SingleFile({ file, favorites }: { file: TFile, favorites: Doc<"favorites">[] | undefined }) {
   const typeIcons = {
     image: <IconPhoto />,
     pdf: <IconPdf />,
@@ -49,7 +49,7 @@ function SingleFile({ file }: { file: TFile }) {
           {typeIcons[file.type]}
           {file.name}
         </span>
-        <ActionsMenu file={file} />
+        <ActionsMenu file={file} favorites={favorites} />
       </div>
       <div
         style={{
@@ -118,7 +118,7 @@ function SingleFile({ file }: { file: TFile }) {
   )
 }
 
-export default function FilesGridView({ files, query }: { files: TFile[] | null | undefined, query: string }) {
+export default function FilesGridView({ files, query, favorites }: { files: TFile[] | null | undefined, query: string, favorites: Doc<"favorites">[] | undefined }) {
   const isLoading = files === undefined;
 
   return (
@@ -142,7 +142,7 @@ export default function FilesGridView({ files, query }: { files: TFile[] | null 
         <Grid>
           {files?.map(file => (
             <Grid.Col key={file._id} span={{ base: 12, md: 6, lg: 4 }}>
-              <SingleFile file={file} />
+              <SingleFile favorites={favorites} file={file} />
             </Grid.Col>
           ))}
         </Grid>
