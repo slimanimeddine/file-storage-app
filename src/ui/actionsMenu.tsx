@@ -8,6 +8,7 @@ import classes from "@/styles/uploadFile.module.css"
 import { usePathname } from "next/navigation"
 import { TFile } from "@/types"
 import { Doc } from "../../convex/_generated/dataModel"
+import { Protect } from "@clerk/nextjs"
 
 function Delete({ file }: { file: TFile }) {
   const deleteFile = useMutation(api.files.deleteFile)
@@ -35,14 +36,19 @@ function Delete({ file }: { file: TFile }) {
   });
 
   return (
-    <Menu.Item
-      component="button"
-      onClick={openModal}
-      color="red"
-      leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
+    <Protect
+      role="org:admin"
+      fallback={<></>}
     >
-      Delete
-    </Menu.Item>
+      <Menu.Item
+        component="button"
+        onClick={openModal}
+        color="red"
+        leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
+      >
+        Delete
+      </Menu.Item>
+    </Protect>
   )
 }
 
