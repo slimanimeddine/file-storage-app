@@ -7,9 +7,10 @@ import { Doc } from "../../convex/_generated/dataModel"
 import { ReactNode } from "react"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import { useUser } from "@clerk/nextjs"
 dayjs.extend(relativeTime)
 import { TFile } from "@/types"
+import { useQuery } from "convex/react"
+import { api } from "../../convex/_generated/api"
 
 
 function SingleFile({ file, favorites }: { file: TFile, favorites: Doc<"favorites">[] | undefined }) {
@@ -19,7 +20,9 @@ function SingleFile({ file, favorites }: { file: TFile, favorites: Doc<"favorite
     csv: <IconCsv />
   } as Record<Doc<"files">["type"], ReactNode>
 
-  const user = useUser()
+  const userProfile = useQuery(api.users.getUserProfile, {
+    userId: file.userId
+  })
 
   return (
     <div
@@ -97,13 +100,13 @@ function SingleFile({ file, favorites }: { file: TFile, favorites: Doc<"favorite
             gap: 2
           }}
         >
-          <Avatar src={user.user?.imageUrl} size="sm" alt="it's me" />
+          <Avatar src={userProfile?.image} size="sm" alt="it's me" />
           <span
             style={{
               fontSize: 15,
             }}
           >
-            {user.user?.firstName}
+            {userProfile?.name}
           </span>
         </span>
         <span

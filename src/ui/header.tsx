@@ -1,16 +1,17 @@
-import { Group, Button, Box, Flex, } from "@mantine/core";
-import { MantineLogo } from "@mantinex/mantine-logo";
+import { Group, Button, Box, Flex } from "@mantine/core";
 import classes from "@/styles/header.module.css";
 import Link from "next/link";
 import { OrganizationSwitcher, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import Logo from "./logo";
+import logoClasses from "@/styles/logo.module.css"
 
 export default function Header() {
   return (
     <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
-          <Link href={"/"}>
-            <MantineLogo size={30} />
+          <Link className={logoClasses.link} href={"/"}>
+            <Logo />
           </Link>
           <Flex
             gap="md"

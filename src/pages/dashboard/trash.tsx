@@ -7,7 +7,7 @@ export default function Page() {
       <Head>
         <title>Dashboard | Trash</title>
       </Head>
-      <SideNavLayout title="Trash" />
+      <SideNavLayout title="Trash" isTrash={true} />
     </>
   )
 }

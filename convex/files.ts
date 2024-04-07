@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { MutationCtx, QueryCtx, mutation, query } from "./_generated/server";
+import { MutationCtx, QueryCtx, internalMutation, mutation, query } from "./_generated/server";
 import { fileTypes } from "./schema";
 import { Id } from "./_generated/dataModel";
 
@@ -57,7 +57,8 @@ export const createFile = mutation({
       name: args.name,
       orgId: args.orgId,
       fileId: args.fileId,
-      type: args.type
+      type: args.type,
+      userId: hasAccess.user._id,
     })
   }
 })
@@ -66,7 +67,8 @@ export const getFiles = query({
   args: {
     orgId: v.string(),
     query: v.optional(v.string()),
-    favorites: v.optional(v.boolean())
+    favorites: v.optional(v.boolean()),
+    trash: v.optional(v.boolean())
   },
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity()
@@ -100,6 +102,12 @@ export const getFiles = query({
         .collect()
 
       files = files.filter(file => favorites.some(favorite => favorite.fileId === file._id))
+    }
+
+    if (args.trash) {
+      files = files.filter(file => file.shouldDelete)
+    } else {
+      files = files.filter(file => !file.shouldDelete)
     }
 
     const filesWithUrls = await Promise.all(
@@ -140,6 +148,18 @@ export const getAllFavorites = query({
   }
 })
 
+export const deleteAllFiles = internalMutation({
+  args: {},
+  async handler(ctx) {
+    const files = await ctx.db.query("files").withIndex("by_shouldDelete", (q) => q.eq("shouldDelete", true)).collect()
+
+    await Promise.all(files.map(async (file) => {
+      await ctx.storage.delete(file.fileId)
+      return await ctx.db.delete(file._id)
+    }))
+  }
+})
+
 export const deleteFile = mutation({
   args: {
     fileId: v.id("files")
@@ -157,7 +177,32 @@ export const deleteFile = mutation({
       throw new ConvexError("You do not have permission to delete this file")
     }
 
-    await ctx.db.delete(args.fileId)
+    await ctx.db.patch(args.fileId, {
+      shouldDelete: true
+    })
+  }
+})
+
+export const restoreFile = mutation({
+  args: {
+    fileId: v.id("files")
+  },
+  async handler(ctx, args) {
+    const access = await hasAccessToFile(ctx, args.fileId)
+
+    if (!access) {
+      throw new ConvexError("no access to file")
+    }
+
+    const isAdmin = access.user.orgIds.find(org => org.orgId === access.file.orgId)?.role === "admin"
+
+    if (!isAdmin) {
+      throw new ConvexError("You do not have permission to delete this file")
+    }
+
+    await ctx.db.patch(args.fileId, {
+      shouldDelete: false
+    })
   }
 })
 

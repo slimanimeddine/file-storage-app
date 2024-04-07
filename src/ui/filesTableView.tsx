@@ -1,40 +1,23 @@
 import { DataTable } from "mantine-datatable";
 import ActionsMenu from "./actionsMenu";
 import dayjs from "dayjs"
-import { useUser } from "@clerk/nextjs"
 import { TFile } from "@/types"
 import { Doc } from "../../convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+
+function UserName({ file }: { file: TFile }) {
+  const userProfile = useQuery(api.users.getUserProfile, {
+    userId: file.userId
+  })
+
+  return userProfile?.name
+}
 
 export default function FilesTableView({ files, favorites }: { files: TFile[] | null | undefined, favorites: Doc<"favorites">[] | undefined }) {
-  const user = useUser()
 
   if (!files) {
-    return (
-      <DataTable
-        withTableBorder
-        borderRadius="md"
-        highlightOnHover
-        minHeight={50}
-        columns={[
-          {
-            accessor: "name",
-          },
-          {
-            accessor: "type",
-          },
-          {
-            accessor: "user",
-          },
-          {
-            accessor: "uploadedOn",
-          },
-          {
-            accessor: "actions",
-          }
-        ]}
-        records={[]}
-      />
-    )
+    return null
   }
 
   return (
@@ -42,7 +25,7 @@ export default function FilesTableView({ files, favorites }: { files: TFile[] | 
       withTableBorder
       borderRadius="md"
       highlightOnHover
-      minHeight={50}
+      minHeight={150}
       columns={[
         {
           accessor: "name",
@@ -54,7 +37,7 @@ export default function FilesTableView({ files, favorites }: { files: TFile[] | 
         },
         {
           accessor: "user",
-          render: () => user.user?.fullName
+          render: (file) => UserName({ file })
         },
         {
           accessor: "uploadedOn",

@@ -1,6 +1,5 @@
 import { AppShell, Burger, Button, Flex, Group, NavLink, Select } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { MantineLogo } from "@mantinex/mantine-logo";
 import { IconFiles, IconStar, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,10 +13,13 @@ import { OrganizationSwitcher, UserButton, SignedOut, SignInButton, SignedIn, us
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { TFile } from "@/types";
+import Logo from "./logo";
+import logoClasses from "@/styles/logo.module.css"
 
 type Props = {
   title: string,
   isFavorites?: boolean,
+  isTrash?: boolean,
 };
 
 const linkItems = [
@@ -38,7 +40,7 @@ const linkItems = [
   },
 ]
 
-export function SideNavLayout({ title, isFavorites = false }: Props) {
+export function SideNavLayout({ title, isFavorites = false, isTrash = false }: Props) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const pathname = usePathname()
@@ -60,7 +62,7 @@ export function SideNavLayout({ title, isFavorites = false }: Props) {
     orgId ? { orgId } : "skip"
   )
 
-  const files = useQuery(api.files.getFiles, orgId ? { orgId, query, favorites: isFavorites } : "skip") as TFile[] | undefined | null;
+  const files = useQuery(api.files.getFiles, orgId ? { orgId, query, favorites: isFavorites, trash: isTrash } : "skip") as TFile[] | undefined | null;
 
   return (
     <AppShell
@@ -77,8 +79,8 @@ export function SideNavLayout({ title, isFavorites = false }: Props) {
           <Group>
             <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
             <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
-            <Link href={"/"}>
-              <MantineLogo size={30} />
+            <Link className={logoClasses.link} href={"/"}>
+              <Logo />
             </Link>
           </Group>
 

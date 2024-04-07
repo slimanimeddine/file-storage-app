@@ -62,6 +62,7 @@ export default function ActionsMenu({ file, favorites }: { file: TFile, favorite
 
   const toggleFavorite = useMutation(api.files.toggleFavorite)
   const isFavorited = favorites?.some(f => f.fileId === file._id)
+  const restoreFile = useMutation(api.files.restoreFile)
 
   return (
     <Menu shadow="md">
@@ -123,13 +124,21 @@ export default function ActionsMenu({ file, favorites }: { file: TFile, favorite
         }
 
         {/* delete */}
-        {(pathname === pathnames.files || pathname === pathnames.favorites) && (
+        {(pathname === pathnames.files || pathname === pathnames.favorites) && !file.shouldDelete && (
           <Delete file={file} />
         )}
 
         {/* restore */}
-        {pathname === pathnames.trash && (
-          <Menu.Item color="green" leftSection={<IconArrowBack style={{ width: rem(14), height: rem(14) }} />}>
+        {file.shouldDelete && (
+          <Menu.Item
+            color="green"
+            leftSection={<IconArrowBack style={{ width: rem(14), height: rem(14) }} />}
+            onClick={() => {
+              restoreFile({
+                fileId: file._id
+              })
+            }}
+          >
             Restore
           </Menu.Item>
         )}
