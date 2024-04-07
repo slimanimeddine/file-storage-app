@@ -48,6 +48,8 @@ export function SideNavLayout({ title, isFavorites = false, isTrash = false }: P
 
   const [query, setQuery] = useState("");
 
+  const [type, setType] = useState("all");
+
   const organization = useOrganization()
   const user = useUser()
 
@@ -62,7 +64,7 @@ export function SideNavLayout({ title, isFavorites = false, isTrash = false }: P
     orgId ? { orgId } : "skip"
   )
 
-  const files = useQuery(api.files.getFiles, orgId ? { orgId, query, favorites: isFavorites, trash: isTrash } : "skip") as TFile[] | undefined | null;
+  const files = useQuery(api.files.getFiles, orgId ? { orgId, query, favorites: isFavorites, trash: isTrash, type: type === "all" ? undefined : type as "image" | "pdf" | "csv" } : "skip") as TFile[] | undefined | null;
 
   return (
     <AppShell
@@ -139,9 +141,15 @@ export function SideNavLayout({ title, isFavorites = false, isTrash = false }: P
           <CustomSegmentedControl value={view} setValue={setView} />
           <Select
             placeholder="Filter files"
-            data={["All", "Image", "CSV", "PDF"]}
-            defaultValue="All"
+            data={[
+              { label: "All", value: "all" },
+              { label: "Image", value: "image" },
+              { label: "CSV", value: "csv" },
+              { label: "PDF", value: "pdf" },
+            ]}
+            value={type}
             allowDeselect={false}
+            onChange={(_value, option) => setType(option.value)}
           />
         </Flex>
 
