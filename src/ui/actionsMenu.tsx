@@ -1,6 +1,6 @@
 import { ActionIcon, Menu, rem, Text } from "@mantine/core"
 import { IconDotsVertical, IconDownload, IconStar, IconTrash, IconArrowBack } from "@tabler/icons-react"
-import { useMutation } from "convex/react"
+import { useMutation, useQuery } from "convex/react"
 import { api } from "../../convex/_generated/api"
 import { modals } from "@mantine/modals"
 import { notifications } from "@mantine/notifications"
@@ -12,6 +12,7 @@ import { Protect } from "@clerk/nextjs"
 
 function Delete({ file }: { file: TFile }) {
   const deleteFile = useMutation(api.files.deleteFile)
+  const me = useQuery(api.users.getMe)
 
   const openModal = () => modals.openConfirmModal({
     title: "Delete file",
@@ -37,7 +38,11 @@ function Delete({ file }: { file: TFile }) {
 
   return (
     <Protect
-      role="org:admin"
+      condition={(check) => {
+        return check({
+          role: "org:admin"
+        }) || file.userId === me?._id
+      }}
       fallback={<></>}
     >
       <Menu.Item
