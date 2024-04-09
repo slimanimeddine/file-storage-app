@@ -1,8 +1,8 @@
-# [File Storage App](https://file-storage-app.vercel.com)
+# [File Storage App](https://file-storage-app-peach.vercel.app/)
 
 This is a file upload web app kind of like a mini version of google drive built with Next.js Pages Router for the client side and Convex for the backend.
 
-[![File Storage App](./public/screenshot.png)](https://file-storage-app.vercel.com)
+[![File Storage App](./public/screenshot.png)](https://file-storage-app-peach.vercel.app/)
 
 ## Tech Stack
 
